@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "845522825376",
+    "project_id": "medimitra-99949",
+    "storage_bucket": "medimitra-99949.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:845522825376:android:f21edb458f434615f999c5",
+        "android_client_info": {
+          "package_name": "com.example.medimitra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoulEzK_KhugjjA74T6bN9EpWPPMJFvGk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
