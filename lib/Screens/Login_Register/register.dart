@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:medimitra/Screens/Login_Register/Login.dart';
 import 'package:medimitra/pages/bottomNvarbar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:medimitra/widgets.dart/Database.dart';
 import 'package:medimitra/widgets.dart/app_Widgets.dart';
+import 'package:medimitra/widgets.dart/shared.dart';
 import 'package:random_string/random_string.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,17 +34,17 @@ registration() async {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         backgroundColor: Colors.blueAccent,
         content: Text("Registered Successfully!", style: GoogleFonts.poppins(fontSize: 18,),)));
-        String Id = randomAlphaNumeric(10);
+        String id = randomAlphaNumeric(10);
         Map<String,dynamic> addUserInfo ={
           "Name": nameController.text,
           "Email": emailController.text,
-          "Id": Id
+          "Id": id
         };
 DatabaseMethods databaseMethods = DatabaseMethods();
-await databaseMethods.addUserDetail(addUserInfo, Id);
-  // await SharedPreferenceHelper().saveUserName(nameController.text);
-  //       await SharedPreferenceHelper().saveUserEmail(emailController.text);
-  //       await SharedPreferenceHelper().saveUserId(Id);
+await databaseMethods.addUserDetail(addUserInfo, id);
+        await SharePreferencesHelper().saveUserName(nameController.text);
+        await SharePreferencesHelper().saveUserEmail(emailController.text);
+        await SharePreferencesHelper().saveUserId(id);
         Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>BottomNavbar()));
 
     } on FirebaseAuthException catch (e) {
@@ -53,7 +53,7 @@ await databaseMethods.addUserDetail(addUserInfo, Id);
       } else if (e.code == 'email-already-in-use') {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: Colors.orangeAccent,
+            backgroundColor: Colors.orangeAccent,  
             content: Text("Account already exists.", style: GoogleFonts.poppins(fontSize: 18,),),
           ),
         );

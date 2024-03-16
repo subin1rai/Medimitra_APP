@@ -1,18 +1,45 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:medimitra/widgets.dart/Database.dart';
 import 'package:medimitra/widgets.dart/app_Widgets.dart';
+import 'package:medimitra/widgets.dart/shared.dart';
 
 class OrderDetails extends StatefulWidget {
-  const OrderDetails({super.key});
+  String image,name,detail, price;
+  OrderDetails({required this.image,required  this.name,required  this.detail,required this.price});
 
   @override
   State<OrderDetails> createState() => _OrderDetailsState();
 }
 
 class _OrderDetailsState extends State<OrderDetails> {
-  int a = 1;
+  int a = 1, total= 0;
+  String? id;
+
+  getthesharedpref()async{
+    id = await SharePreferencesHelper().getUserId();
+    setState(() {
+      
+    });
+  }
+  ontheload()async{
+    await getthesharedpref();
+    setState(() {
+      
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    ontheload();
+    total= int.parse(widget.price);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +56,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                   Icons.arrow_back_ios_new_outlined,
                   color: Colors.black,
                 )),
-            Image.asset(
-              'assets/ddd.png',
+            Image.network(
+              widget.image,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.width / 1,
               fit: BoxFit.fill,
@@ -43,12 +70,9 @@ class _OrderDetailsState extends State<OrderDetails> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    
                     Text(
-                      "Device",
-                      style: AppWidget.semiTextStyle(),
-                    ),
-                    Text(
-                      "Stethoscope",
+                      widget.name,
                       style: AppWidget.HeadlineTextStyle(),
                     ),
                   ],
@@ -58,6 +82,8 @@ class _OrderDetailsState extends State<OrderDetails> {
                   onTap: () {
                     if (a > 1) {
                       --a;
+                    total = total-int.parse(widget.price);
+
                     }
                     setState(() {});
                   },
@@ -86,6 +112,7 @@ class _OrderDetailsState extends State<OrderDetails> {
                 GestureDetector(
                   onTap: () {
                     ++a;
+                    total = total+ int.parse(widget.price);
                     setState(() {});
                   },
                   child: Container(
@@ -104,7 +131,7 @@ class _OrderDetailsState extends State<OrderDetails> {
             ),
             const SizedBox(height: 15,),
             Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Habitant morbi tristique senectus et netus et malesuada fames ac. Nunc congue nisi vitae suscipit tellus mauris a diam maecenas. Vitae congue mauris rhoncus aenean. Volutpat lacus laoreet non curabitur gravida arcu. Imperdiet proin fermentum leo vel orci porta. Sed viverra tellus in hac habitasse platea dictumst. In aliquam sem fringilla ut.',
+              widget.detail,maxLines: 4,
               style: AppWidget.LightTextStyle(),
             ),
             Spacer(),
@@ -121,20 +148,37 @@ class _OrderDetailsState extends State<OrderDetails> {
                       style: AppWidget.semiTextStyle(),
                     ),
                      Text(
-                      "NPR: 2400",
+                      "NPR: "+total.toString(),
                       style: AppWidget.HeadlineTextStyle(),
                     ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(40,15,40,15),
-                  decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(26)),
-                  child: Row(children: [
-                    Text("Add to Cart", style: GoogleFonts.poppins(color: Colors.white, fontSize: 16),),
-                    Container( 
-                      child: Icon(Icons.shopping_cart_outlined ,color: Colors.white),
-                    )
-                  ],),
+                GestureDetector(
+                onTap: () async {
+                Map<String, dynamic> addMedicinetoCart = {
+                        "Name": widget.name,
+                        "Quantity": a.toString(),
+                        "Total": total.toString(),
+                        "Image": widget.image
+                      };
+                      await DatabaseMethods().addMedicinetoCart(addMedicinetoCart, id.toString());
+                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Colors.orangeAccent,
+              content: Text(
+                "Medicine Added to Cart",
+                style: TextStyle(fontSize: 18.0),
+              )));
+                    },
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(40,15,40,15),
+                    decoration: BoxDecoration(color: Colors.orange,borderRadius: BorderRadius.circular(26)),
+                    child: Row(children: [
+                      Text("Add to Cart", style: GoogleFonts.poppins(color: Colors.white, fontSize: 16),),
+                      Container( 
+                        child: Icon(Icons.shopping_cart_outlined ,color: Colors.white),
+                      )
+                    ],),
+                  ),
                 )
               ],),
             )

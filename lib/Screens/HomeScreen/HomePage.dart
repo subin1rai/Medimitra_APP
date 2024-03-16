@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:medimitra/Chat_Ai/chat_ai.dart';
 import 'package:medimitra/pages/OrderDetails.dart';
+import 'package:medimitra/widgets.dart/Database.dart';
 import 'package:medimitra/widgets.dart/app_Widgets.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,198 +18,213 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool medicine = false, chat = false, device = false;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        margin: const EdgeInsets.fromLTRB(20, 50, 0, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Hello Subin", style: AppWidget.boldTextStyle()),
-                Container(
-                  margin: const EdgeInsets.only(right: 20),
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular((10))),
-                  child: const Icon(Icons.shopping_cart, color: Colors.white),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            //top text
-            Text("Medicine", style: AppWidget.HeadlineTextStyle()),
-            Text("Discover and get great food.",
-                style: AppWidget.LightTextStyle()),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-                margin: const EdgeInsets.only(right: 20), child: showItem()),
-            const SizedBox(height: 20),
+  Stream? MedicineItemStream;
 
-            // main body
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => OrderDetails()));
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.all(8),
-                      child: Material(
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(20),
-                        child: Container(
-                          padding: const EdgeInsets.all(14),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                'assets/chat doctor.png',
-                                height: 150,
-                                width: 150,
-                                fit: BoxFit.cover,
-                              ),
-                              Text("Medicine name",
-                                  style: AppWidget.semiTextStyle()),
-                              const SizedBox(height: 5),
-                              Text("Medicine description",
-                                  style: AppWidget.LightTextStyle()),
-                              const SizedBox(height: 5),
-                              Text(
-                                "NRP 500",
-                                style: AppWidget.semiTextStyle(),
-                              )
-                            ],
+  ontheload() async {
+    MedicineItemStream = await DatabaseMethods().getMedicineItem("Medicine");
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    ontheload();
+  }
+
+  Widget allItems() {
+    return StreamBuilder(
+        stream: MedicineItemStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          return snapshot.hasData
+              ? ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: snapshot.data.docs.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot ds = snapshot.data.docs[index];
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => OrderDetails(
+                                      detail: ds["Detail"],
+                                      name: ds["Name"],
+                                      price: ds["Price"],
+                                      image: ds["Image"],
+                                    )));
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(8),
+                        child: Material(
+                          elevation: 5,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            padding: const EdgeInsets.all(14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    ds["Image"],
+                                    height: 150,
+                                    width: 150,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Text(ds["Name"],
+                                    style: AppWidget.semiTextStyle()),
+                                const SizedBox(height: 5),
+                                Text(ds["Detail"],
+                                    style: AppWidget.LightTextStyle()),
+                                const SizedBox(height: 5),
+                                Text(
+                                  "NRP " + ds["Price"],
+                                  style: AppWidget.semiTextStyle(),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    child: Material(
-                      elevation: 5,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              'assets/chat doctor.png',
-                              height: 150,
-                              width: 150,
-                              fit: BoxFit.cover,
+                    );
+                  })
+              : CircularProgressIndicator();
+        });
+  }
+
+  Widget allItemsVerically() {
+    return StreamBuilder(
+        stream: MedicineItemStream,
+        builder: (context, AsyncSnapshot snapshot) {
+          return snapshot.hasData
+              ? ListView.builder(
+                  padding: EdgeInsets.zero,
+                  itemCount: snapshot.data.docs.length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  itemBuilder: (context, index) {
+                    DocumentSnapshot ds = snapshot.data.docs[index];
+                    return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => OrderDetails(
+                                        detail: ds["Detail"],
+                                        name: ds["Name"],
+                                        price: ds["Price"],
+                                        image: ds["Image"],
+                                      )));
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 20, bottom: 20),
+                          child: Material(
+                            elevation: 5.0,
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: EdgeInsets.all(5),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(ds["Image"],
+                                        height: 120,
+                                        width: 120,
+                                        fit: BoxFit.cover),
+                                  ),
+                                  const SizedBox(
+                                    width: 20,
+                                  ),
+                                  Column(
+                                    children: [
+                                      Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2,
+                                          child: Text(ds["Name"],
+                                              style:
+                                                  AppWidget.semiTextStyle())),
+                                      const SizedBox(height: 5),
+                                      Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2,
+                                          child: Text(ds["Detail"],
+                                              style:
+                                                  AppWidget.LightTextStyle())),
+                                      const SizedBox(height: 5),
+                                      Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2,
+                                          child: Text("NPR " + ds["Price"],
+                                              style:
+                                                  AppWidget.semiTextStyle())),
+                                    ],
+                                  )
+                                ],
+                              ),
                             ),
-                            Text("Medicine name",
-                                style: AppWidget.semiTextStyle()),
-                            const SizedBox(height: 5),
-                            Text("Medicine description",
-                                style: AppWidget.LightTextStyle()),
-                            const SizedBox(height: 5),
-                            Text(
-                              "NRP 500",
-                              style: AppWidget.semiTextStyle(),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
+                          ),
+                        ));
+                  })
+              : CircularProgressIndicator();
+        });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(20, 50, 0, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Hello Subin", style: AppWidget.boldTextStyle()),
                   Container(
-                    margin: const EdgeInsets.all(8),
-                    child: Material(
-                      elevation: 5,
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image.asset(
-                              'assets/chat doctor.png',
-                              height: 150,
-                              width: 150,
-                              fit: BoxFit.cover,
-                            ),
-                            Text("Medicine name",
-                                style: AppWidget.semiTextStyle()),
-                            const SizedBox(height: 5),
-                            Text("Medicine description",
-                                style: AppWidget.LightTextStyle()),
-                            const SizedBox(height: 5),
-                            Text(
-                              "NRP 500",
-                              style: AppWidget.semiTextStyle(),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                    margin: const EdgeInsets.only(right: 20),
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular((10))),
+                    child: const Icon(Icons.shopping_cart, color: Colors.white),
+                  )
                 ],
               ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-
-            Container(
-              margin: const EdgeInsets.only(right: 20),
-              child: Material(
-                elevation: 5.0,
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Image.asset('assets/medicine.png',
-                          height: 120, width: 120, fit: BoxFit.cover),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Text("Second product",
-                                  style: AppWidget.semiTextStyle())),
-                          const SizedBox(height: 5),
-                          Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Text("Second product description",
-                                  style: AppWidget.LightTextStyle())),
-                          const SizedBox(height: 5),
-                          Container(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Text("NPR 1200",
-                                  style: AppWidget.semiTextStyle())),
-                        ],
-                      )
-                    ],
-                  ),
-                ),
+              const SizedBox(
+                height: 30,
               ),
-            )
-          ],
+              //top text
+              Text("Medicine", style: AppWidget.HeadlineTextStyle()),
+              Text("Discover and get great food.",
+                  style: AppWidget.LightTextStyle()),
+              const SizedBox(
+                height: 20,
+              ),
+              Container(
+                  margin: const EdgeInsets.only(right: 20), child: showItem()),
+              const SizedBox(height: 20),
+
+              // main body
+              Container(height: 280, child: allItems()),
+              const SizedBox(
+                height: 20,
+              ),
+
+              allItemsVerically()
+            ],
+          ),
         ),
       ),
     );
@@ -220,10 +238,12 @@ class _HomePageState extends State<HomePage> {
       children: [
         //medicine
         GestureDetector(
-          onTap: () {
+          onTap: () async {
             medicine = true;
             chat = false;
             device = false;
+            MedicineItemStream =
+                await DatabaseMethods().getMedicineItem("Medicine");
             setState(() {});
           },
           child: Material(
@@ -241,10 +261,13 @@ class _HomePageState extends State<HomePage> {
         ),
         //AI CHAT
         GestureDetector(
-          onTap: () {
+          onTap: () async {
             medicine = false;
             chat = true;
             device = false;
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => ChatAi_Page()));
+
             setState(() {});
           },
           child: Material(
@@ -262,10 +285,13 @@ class _HomePageState extends State<HomePage> {
         ),
         //device
         GestureDetector(
-          onTap: () {
+          onTap: () async {
             medicine = false;
             chat = false;
             device = true;
+            MedicineItemStream =
+                await DatabaseMethods().getMedicineItem("Device");
+
             setState(() {});
           },
           child: Material(

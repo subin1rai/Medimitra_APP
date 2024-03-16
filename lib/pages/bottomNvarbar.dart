@@ -1,6 +1,7 @@
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
 import 'package:flutter/material.dart';
+import 'package:medimitra/Chat_Ai/chat_ai.dart';
 import 'package:medimitra/pages/Walllet.dart';
 import 'package:medimitra/pages/order.dart';
 import 'package:medimitra/pages/profile.dart';
@@ -20,16 +21,16 @@ class _BottomNavbarState extends State<BottomNavbar> {
   late Widget Currentpage;
   late HomePage homePage;
   late Profile profile;
-  late Wallet wallet;
+  late ChatAi_Page chat;
   late OrderPage order;
 
   @override
   void initState() {
     homePage = HomePage();
     profile = Profile();
-    wallet = Wallet();
+    chat = ChatAi_Page();
     order = OrderPage();
-    pages = [homePage, order, wallet, profile];
+    pages = [homePage, order, chat, profile];
     super.initState();
   }
 

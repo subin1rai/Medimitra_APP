@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:medimitra/widgets.dart/Database.dart';
 import 'package:medimitra/widgets.dart/app_Widgets.dart';
@@ -29,8 +28,8 @@ class _AddMedicineState extends State<AddMedicine> {
     setState(() {});
   }
 
-  uploadItem() async{
-   if (selectImage != null &&
+  uploadItem() async {
+    if (selectImage != null &&
         nameController.text != "" &&
         priceController.text != "" &&
         detailController.text != "") {
@@ -52,12 +51,13 @@ class _AddMedicineState extends State<AddMedicine> {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Colors.orangeAccent,
             content: Text(
-              "Food Item has been added Successfully",
+              "Medicine Item has been added Successfully",
               style: TextStyle(fontSize: 18.0),
             )));
       });
     }
   }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -86,49 +86,52 @@ class _AddMedicineState extends State<AddMedicine> {
                 style: AppWidget.semiTextStyle(),
               ),
               SizedBox(height: 20),
-             selectImage == null? GestureDetector(
-              onTap: (){
-                getImg();
-              },
-               child: Center(
-                  child: Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(20),
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.black, width: 1.5),
+              selectImage == null
+                  ? GestureDetector(
+                      onTap: () {
+                        getImg();
+                      },
+                      child: Center(
+                        child: Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(20),
+                          child: Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              border:
+                                  Border.all(color: Colors.black, width: 1.5),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.camera_alt_outlined,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Material(
+                        elevation: 4,
                         borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Icon(
-                        Icons.camera_alt_outlined,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ),
-             ):Center(
-                child: Material(
-                  elevation: 4,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    width: 150,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 1.5),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.file(
-                        selectImage!,
-                        fit: BoxFit.cover,
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 1.5),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Image.file(
+                              selectImage!,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
               const SizedBox(
                 height: 30,
               ),
@@ -243,7 +246,6 @@ class _AddMedicineState extends State<AddMedicine> {
                   uploadItem();
                 },
                 child: Center(
-                
                     child: Material(
                         elevation: 5.0,
                         borderRadius: BorderRadius.circular(10),
