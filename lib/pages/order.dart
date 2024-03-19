@@ -18,19 +18,13 @@ class _OrderPageState extends State<OrderPage> {
   String? id;
   int totals = 0;
 
- void startTimer(){
- try{
-   Timer(Duration(seconds: 3), () { 
+void startTimer(){
+  Timer(Duration(seconds: 3), () { 
     // amount2=total;
     setState(() {
       
     });
   });
-  
- }
- catch(e){
-   print(e);
- }
 }
 
   getthesharedpreferences() async { 
@@ -53,8 +47,8 @@ class _OrderPageState extends State<OrderPage> {
   void initState() {
     // TODO: implement initState
     ontheload();
-    super.initState();
     startTimer();
+    super.initState();
   }
 
 

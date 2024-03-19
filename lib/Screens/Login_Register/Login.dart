@@ -16,9 +16,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   String email ="", password ="";
-
   TextEditingController loginemailController = TextEditingController();
   TextEditingController loginpasswordController = TextEditingController();
 
@@ -44,8 +42,6 @@ class _LoginState extends State<Login> {
     }
   }
 }
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,8 +105,7 @@ class _LoginState extends State<Login> {
           child: Column(
             children: [
               
-            //Email
-          
+            //Emails valudation
             Container(
               margin: const EdgeInsets.fromLTRB(20, 4, 20, 20),
               decoration: BoxDecoration(
