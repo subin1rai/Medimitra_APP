@@ -19,12 +19,15 @@ class _OrderPageState extends State<OrderPage> {
   int totals = 0;
 
 void startTimer(){
+
+  
   Timer(Duration(seconds: 3), () { 
     // amount2=total;
     setState(() {
-      
+      id = null;
     });
   });
+
 }
 
   getthesharedpreferences() async { 

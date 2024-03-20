@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:medimitra/Screens/HomeScreen/HomePage.dart';
 import 'package:medimitra/Screens/Login_Register/register.dart';
+import 'package:medimitra/pages/OrderDetails.dart';
 import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 void main() async{
@@ -22,7 +24,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: RegisterPage(),
+      home: RegisterPage()
     );
   }
 }
